@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Show Event</title>
+    <link rel='stylesheet' type="text/css" href='/stylesheets/bootstrap.css'/>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="images/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
+    <script src="/javascripts/jquery.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+    <script src="/javascripts/app.js"></script>
+    <script src="/javascripts/database.js"></script>
+    <script src="/javascripts/index.js"></script>
+    <style>
+
+        #map {
+            height: 300px;
+            width: 60%;
+            background: gray;
+        }
+
+    </style>
+</head>
+<body onload="initSW(),initDB()">
+<a href="#" id="message" class="btn btn-danger" style="float:left; display:none">new comment</a>
+<!-- header nav-->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Music Festival</a>
+        </div>
+        <!--nav links-->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/" class="active">Home </a></li>
+                <li><a href="event">Event</a></li>
+                <li><a href="blog">Blog</a></li>
+                <li><a href="location">Location</a></li>
+                <li><a href="comment">Comment</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="createvent">Event</a></li>
+                        <li><a href="createblog">Blog</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right nav-pills">
+                <% if(islogin){ %>
+                    <li><a><%= name %>,&nbsp;Welcome!&nbsp;</a></li>
+                    <li><a href="logout">Log out</a></li>
+                <% }else{ %>
+                    <li><a href="signin">Sign in</a></li>
+                    <li><a href="login">Log in</a></li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="top-content">
+    <div class="inner-bg">
+        <div class="container">
+
+            <div class="comments-wrap" id="comments-wrap">
+                <h4>Comments</h4><hr>
+            </div>
+
+
+            <div class="row">
+                <div class="col-sm-10 col-sm-offset-1">
+                    <form role="form" class="form-horizontal">
+                        <div class="form-group text-center">
+                            <h4>Leave your comment</h4>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment-name" class="col-sm-3 control-label">Name</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" name="comment_name" id="comment_name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment-title" class="col-sm-3 control-label">Title</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" name="comment_title" id="comment_title">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="comment-content" class="col-sm-3 control-label">Comment</label>
+                            <div class="col-sm-7">
+                                <textarea typeof="text" class="form-control" name="comment_content" id="comment_content"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-4">
+                                <button class="btn" type="button" onclick="CommentputinDB()" id="submit_comment">Submit your comment</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+<script>
+    function initMap() {
+
+        var uluru = {lat: 53.38108855193859,lng: -1.4801287651062012};
+
+        var map = new google.maps.Map(
+            document.getElementById('map'), {zoom: 17, center: uluru});
+
+        var marker = new google.maps.Marker({position: uluru, map: map});
+    }
+</script>
+</body>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var data = <%- data %>;
+    display_results(data["results"]);
+
+    function display_results(data){
+        var container = $("#comments-wrap");
+        if (data.length > 0) {
+            for (var i = 0; i < data.length; i++){
+                var ul = $("<ul></ul>");
+                var li = $("<li></li>");
+                var icondiv = $("<div></div>").addClass("comment-avatar");
+                var icon = $("<img></img>").attr("src","https://www.jamf.com/jamf-nation/img/default-avatars/generic-user-purple.png").addClass("img-responsive");
+                icondiv.append(icon);
+                var cdiv = $("<div></div>").addClass("comment-info");
+                var title = $("<h6></h6>").text(data[i]["Title"]);
+                var user = $("<p></p>").text(data[i]["Name"]);
+                var content = $("<h6></h6>").text(data[i]["Comment"]);
+                cdiv.append(title,user,content);
+                li.append(icondiv,cdiv);
+                ul.append(li);
+                container.append(ul);
+            }
+        }
+    }
+
+    function showmessage(){
+        $("#message").show();
+        setTimeout(function(){//定时器
+                $("#message").fadeOut();//将图片的display属性设置为none
+            },
+            1000);
+    }
+
+    $(function ()
+    {
+        var socket = io();
+        // submit
+        $("#submit_comment").on( "click", function() {
+            // socket io broadcast message
+            var title = $('#comment_title').val();
+            var name = $('#comment_name').val();
+            var comment = $('#comment_content').val();
+            var jsonmessage = {"title":title, "name":name, "comment":comment};
+            socket.emit('newcomment', jsonmessage);
+        });
+
+        // listen on new message
+        socket.on('updatecomment', function(msg){
+            showmessage();
+            // update page
+            var msgdata = {}
+            msgdata["Title"] = msg["title"];
+            msgdata["Name"] = msg["name"];
+            msgdata["Comment"] = msg["comment"];
+            display_results([msgdata]);
+        });
+
+
+
+
+    });
+
+
+</script>
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC792rhYt65xtFgt_QFZnzZvS6WAZerHKs&libraries=places&callback=initMap"
+        async defer></script>
+</html>

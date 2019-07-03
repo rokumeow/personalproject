@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Register</title>
+    <link rel='stylesheet' type="text/css" href='/stylesheets/bootstrap.css'/>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="images/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
+    <script src="/javascripts/jquery.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+    <script src="/javascripts/app.js"></script>
+    <script src="/javascripts/database.js"></script>
+    <script src="/javascripts/index.js"></script>
+    <!--<script src="/javascripts/checkusername.js"></script>-->
+
+</head>
+<body onload="initSW(),initDB()">
+<!-- header nav-->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Music Festival</a>
+        </div>
+        <!--nav links-->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/" class="active">Home </a></li>
+                <li><a href="event">Event</a></li>
+                <li><a href="blog">Blog</a></li>
+                <li><a href="location">Location</a></li>
+                <li><a href="comment">Comment</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="createvent">Event</a></li>
+                        <li><a href="createblog">Blog</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right nav-pills">
+                <li><a href="signin">Sign in</a></li>
+                <li><a href="login">Log in</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="top-content">
+    <div class="inner-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-10 col-sm-offset-2 form-register">
+                    <div class="text-center">
+                        <h1><strong>Register</strong></h1>
+                    </div>
+                    <form id=“form" class="form-horizontal content-register">
+                    <!--<form role="form" >-->
+                        <div class="form-group">
+                            <label for="register_username" class="col-sm-3 control-label">Username</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" name="register_username" id="register_username"
+                                       placeholder="Username">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="register_password" class="col-sm-3 control-label">Password</label>
+                            <div class="col-sm-7">
+                                <input type="password" class="form-control" name="register_password" id="register_password"
+                                       placeholder="Password">
+                            </div>
+                        </div>
+                        <!--<div class="form-group">-->
+                            <!--<label for="repeat-password" class="col-sm-3 control-label">Repeat Password</label>-->
+                            <!--<div class="col-sm-7">-->
+                                <!--<input type="password" class="form-control" id="repeat-password" placeholder="Repeat Password">-->
+                            <!--</div>-->
+                        <!--</div>-->
+                        <div class="form-group">
+                            <label for="inputEmail" class="col-sm-3 control-label">Email</label>
+                            <div class="col-sm-7">
+                                <input type="email" class="form-control" name="inputEmail" id="inputEmail" placeholder="Email">
+                            </div>
+                        </div>
+                        <!--<input type="text" name="sRole" value="1" style="display: none">-->
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-4">
+                                <button type="submit" id="registerSubmit" class="btn" onclick="onSubmit('/signin'); alert('Register Successful!')">Register</button>
+                            </div>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

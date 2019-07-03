@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Create Event</title>
+    <link rel='stylesheet' type="text/css" href='/stylesheets/bootstrap.css'/>
+    <link rel="stylesheet" type="text/css" href="/stylesheets/style.css">
+    <link rel="icon" type="image/png" sizes="192x192" href="images/icon/android-icon-192x192.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="images/icon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="96x96" href="images/icon/favicon-96x96.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="images/icon/favicon-16x16.png">
+    <script src="/javascripts/jquery.min.js"></script>
+    <script src="/javascripts/bootstrap.min.js"></script>
+    <script src="/javascripts/app.js"></script>
+    <script src="/javascripts/database.js"></script>
+    <script src="/javascripts/index.js"></script>
+    <style>
+        #map {
+            height: 300px;
+            width: 60%;
+            background: gray;
+            margin: auto;
+        }
+    </style>
+</head>
+<body onload="initSW(),initDB()">
+<!-- header nav-->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Music Festival</a>
+        </div>
+        <!--nav links-->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <ul class="nav navbar-nav">
+                <li><a href="/" class="active">Home </a></li>
+                <li><a href="event">Event</a></li>
+                <li><a href="blog">Blog</a></li>
+                <li><a href="location">Location</a></li>
+                <li><a href="comment">Comment</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-left">
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                       aria-expanded="false">
+                        <span class="glyphicon glyphicon-plus"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a href="createvent">Event</a></li>
+                        <li><a href="createblog">Blog</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right nav-pills">
+                <% if(islogin){ %>
+                    <li><a><%= name %>,&nbsp;Welcome!&nbsp;</a></li>
+                    <li><a href="logout">Log out</a></li>
+                <% }else{ %>
+                    <li><a href="signin">Sign in</a></li>
+                    <li><a href="login">Log in</a></li>
+                <% } %>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="top-content">
+    <div class="inner-bg">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-10 col-sm-offset-1 form-event">
+                    <div class="text-center">
+                        <h1><strong>Create Event For You</strong></h1>
+                    </div>
+                    <form id="Yform" onsubmit="onSubmit('/createvent')" class="form-horizontal">
+                        <div class="form-group">
+                            <label for="event_title" class="col-sm-3 control-label">Title</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" name="event_title" id="event_title">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="event_author" class="col-sm-3 control-label">Author</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" name="event_author" id="event_author">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="event_date" class="col-sm-3 control-label">Date</label>
+                            <div class="col-sm-7">
+                                <input type="date" class="form-control" name="event_date" id="event_date"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="event-description" class="col-sm-3 control-label">Description</label>
+                            <div class="col-sm-7">
+                                <textarea type="text" class="form-control" name="event_description" id="event_description"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="blog-file" class="col-sm-3 control-label">Photo</label>
+                            <div class="col-sm-4 ">
+                                <input type="file" accept="image/*" name="fromfile" id="fromfile">
+                                <p>Upload your photos</p>
+                            </div>
+                            <div class="col-sm-4">
+                                <p>or use your camera <button id="camera" type="button"><span class="glyphicon glyphicon-camera"></span> </button> </p>
+                            </div>
+                        </div>
+                        <div class="form-group" id = "mobile_photo_area" hidden>
+                            <input type="file" accept="image/*" capture="camera"  name="m_camera" id="m_camera">
+                            <img id="frame" class="center-block" style="width: 80%; height: auto;">
+                        </div>
+                        <div class="form-group" id = "pc_photo_area" hidden>
+                            <video id="video" class="center-block"></video>
+                            <input name="imagestring" id="imagestring" hidden>
+                            <canvas id="canvas" hidden></canvas>
+                            <div class="col-sm-offset-4 col-sm-4">
+                                <button id="snap" type="button" class="btn" style="margin-top:10px">take photo</button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="event_location" class="col-sm-3 control-label">Location</label>
+                            <div class="col-sm-7">
+                                <input type="text" class="form-control" name="event_Lat" id="event_Lat"/>
+                                <input type="text" class="form-control" name="event_Lng" id="event_Lng"/>
+                            </div>
+                            <div id="map"></div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-sm-offset-4 col-sm-4">
+                                <button type="submit" class="btn" onclick="EventputinDB();">Create Event</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+
+    var Position = null;
+
+    function initMap() {
+        if(navigator.geolocation){
+            navigator.geolocation.getCurrentPosition(function (position) {
+                var pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+
+                var map = new google.maps.Map(document.getElementById('map'),{
+                    zoom:17,
+                    center: pos
+                });
+
+                var marker = new google.maps.Marker({
+                    position: pos,
+                    draggable : true,
+                    map: map
+                });
+
+                var lat = marker.position.lat().toString();
+                var lng = marker.position.lng().toString();
+
+                document.getElementById('event_Lat').value = lat;
+                document.getElementById('event_Lng').value = lng;
+
+                var infowindow = new google.maps.InfoWindow({
+                    content: "Choose a location"
+                });
+
+                google.maps.event.addListener(marker, 'click', function () {
+                    infowindow.open(map,marker);
+                    console.log('vbjknb')
+                });
+
+                google.maps.event.addListener(marker,"dragend",function (event) {
+                    console.log('drag')
+                    var lat = marker.position.lat().toString();
+                    var lng = marker.position.lng().toString();
+
+                    document.getElementById('event_Lat').value = lat;
+                    document.getElementById('event_Lng').value = lng;
+
+                    console.log("3",document.getElementById('event_Lat').value,document.getElementById('event_Lng').value);
+                })
+
+            });
+        }
+
+    }
+</script>
+</body>
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC792rhYt65xtFgt_QFZnzZvS6WAZerHKs&libraries=places&callback=initMap"
+        async defer></script>
+<script src="/javascripts/camera.js"></script>
+</html>
